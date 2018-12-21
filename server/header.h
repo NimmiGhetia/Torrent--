@@ -5,11 +5,8 @@
 #define MAX 10000
 using namespace std;
 
-#include <stdio.h>
-#include <string>
+#include <bits/stdc++.h>
 #include <openssl/sha.h>
-#include <math.h>
-#include <stdlib.h>
-#include <vector>
-
+#include <fstream>
+#include <iostream>
 #endif
