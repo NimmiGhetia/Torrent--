@@ -3,7 +3,7 @@
 vector<string> hashFile(char *file)
 {
     int pieces = ceil(strlen(file) / CHUNK_SIZE);
-    vector<string> hash;
+    vector<string> buf;
     for (int i = 0; i < pieces; i++)
     {
         unsigned char ibuf[CHUNK_SIZE];
@@ -11,7 +11,7 @@ vector<string> hashFile(char *file)
         file += 512 * sizeof(char);
         unsigned char obuf[20];
         SHA1(ibuf, strlen((char *)ibuf), obuf);
-        hash.push_back(string((char *)obuf));
+        buf.push_back(string((char *)obuf));
     }
-    return hash;
+    return buf;
 }

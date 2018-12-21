@@ -8,14 +8,15 @@ void createTorrentFile(char *filename)
     {
         cout << "inside if";
         constexpr size_t bufferSize = 1024 * 1024;
-        unsigned char * buffer;
+        unsigned char * buffer=NULL;
         while (file)
         {
             file.read((char *)buffer, bufferSize);
-            vector<string> hash ;
-            hash = hashFile(buffer);
-            for (auto i = hash.begin(); i != hash.end(); ++i)
-                cout << *i << endl;
+            vector<string> buf ;
+            buf = hashFile(buffer);
+            // cout<<(hashFile(buffer)).size() ;
+            // for (auto i = hash.begin(); i != hash.end(); ++i)
+            //     cout << *i << endl;
         }
         file.close();
         // cout << buf;
