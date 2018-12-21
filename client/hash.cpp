@@ -15,20 +15,11 @@ string toHash(unsigned char *hash)
     return string((char *)buf);
 }
 
-string hashFile(unsigned char *file)
+string hashFile(unsigned char *file,size_t size)
 {
     string buf="";
-    // printf("inside for");
     unsigned char obuf[20];
-    cout << file;
-    unsigned char ibuf[]="A" ;
-    SHA1(ibuf, sizeof(file), obuf);
-    cout<<".......\n"<<ibuf;
-    for (int i = 0; i < 20; i++) {
-        printf("%02x ", obuf[i]);
-    }
-    cout<<".........\n";
-    // cout << toHash(obuf);
+    SHA1(file, size, obuf);
     buf = toHash(obuf);
     return buf;
 }

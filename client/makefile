@@ -6,7 +6,7 @@ OBJ = hash.o mtorrent.o main.o
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
-clt: $(OBJ)
+client: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 	
 .PHONY: clean

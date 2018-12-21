@@ -1,14 +1,14 @@
 #include "global.h"
 
-void createTorrentFile(char *filename)
+vector<string> createHashString(char *filename)
 {
     ifstream file;
     file.open(filename, ios::binary | ios::in);
-    cout << "inside mtorrent";
     size_t bufferSize = CHUNK_SIZE;
+    vector<string> hashfile;
+
     if (file.is_open())
     {
-        vector<string> hashfile;
         struct stat thestat;
         stat(filename, &thestat);
         size_t filesize = thestat.st_size;
@@ -16,32 +16,27 @@ void createTorrentFile(char *filename)
         {
             if (bufferSize > filesize)
             {
-                printf("inside if\n");
                 bufferSize = filesize;
                 unsigned char *buffer = new unsigned char[bufferSize];
                 file.read((char *)(buffer), bufferSize);
-                // cout << buffer;
                 size_t count = file.gcount();
                 if (!count)
                     break;
-                unsigned char temp[] = "this is it";
-                hashfile.push_back(hashFile(temp));
+                hashfile.push_back(hashFile(buffer, bufferSize));
                 break;
             }
             else
             {
-                printf("else ");
                 unsigned char *buffer = new unsigned char[bufferSize];
                 file.read((char *)(buffer), bufferSize);
                 size_t count = file.gcount();
                 if (!count)
                     break;
-                hashfile.push_back(hashFile(buffer));
+                hashfile.push_back(hashFile(buffer, bufferSize));
             }
         }
 
         file.close();
-        cout << "hash string: ..";
         for (auto i = hashfile.begin(); i != hashfile.end(); ++i)
         {
             cout << *i << endl
@@ -53,4 +48,60 @@ void createTorrentFile(char *filename)
         printf("cannot open file");
     }
     // cout << buf;
+    return hashfile;
+}
+
+void createFile(struct metafile details);
+
+void saveTorrentFile(char *filename, URL url1, URL url2)
+{
+    struct metafile mtorrent;
+    mtorrent.url1 = url1;
+    mtorrent.url2 = url2;
+    mtorrent.filename = filename;
+    struct stat thestat;
+    stat(filename, &thestat);
+    size_t filesize = thestat.st_size;
+    mtorrent.filesize = filesize;
+    vector<string> chunkHash = createHashString(filename);
+    string hashString = "";
+    for (auto i = chunkHash.begin(); i != chunkHash.end(); ++i)
+    {
+        hashString += (*i);
+    }
+    mtorrent.hash = hashString;
+    createFile(mtorrent);
+}
+void replaceExt(string &s, const string &newExt)
+{
+
+    string::size_type i = s.rfind('.', s.length());
+
+    if (i != string::npos)
+    {
+        s.replace(i + 1, newExt.length(), newExt);
+    }
+}
+
+void createFile(struct metafile details)
+{
+    fstream file;
+    replaceExt(details.filename,"mtorrent");
+    file.open(details.filename, ios::out);
+    if (file.is_open())
+    {
+        file << details.url1.ip;
+        file << ":";
+        file << details.url1.port;
+        file << endl;
+        file << details.url2.ip;
+        file << ":";
+        file << details.url2.port;
+        file << endl;
+        file << details.filename << endl;
+        file << details.filesize << endl;
+        file << details.hash;
+
+        file.close();
+    }
 }
