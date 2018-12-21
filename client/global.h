@@ -11,9 +11,11 @@ struct metafile{
     struct URL url1,url2 ;
     string filename ;
     int filesize ;
-    char * hash ;
+    string hash ;
 } ;
 
-vector<string> hashFile(unsigned char *file);
+string hashFile(unsigned char *file, size_t size);
+vector<string> createHashString(char * filename);
+void saveTorrentFile(char *filename,URL url1,URL url2);
 
 #endif
