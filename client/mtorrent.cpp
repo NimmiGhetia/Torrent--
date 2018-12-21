@@ -2,23 +2,55 @@
 
 void createTorrentFile(char *filename)
 {
-    ifstream file(filename, ios::binary);
+    ifstream file;
+    file.open(filename, ios::binary | ios::in);
     cout << "inside mtorrent";
+    size_t bufferSize = CHUNK_SIZE;
     if (file.is_open())
     {
-        cout << "inside if";
-        constexpr size_t bufferSize = 1024 * 1024;
-        unsigned char * buffer=NULL;
+        vector<string> hashfile;
+        struct stat thestat;
+        stat(filename, &thestat);
+        size_t filesize = thestat.st_size;
         while (file)
         {
-            file.read((char *)buffer, bufferSize);
-            vector<string> buf ;
-            buf = hashFile(buffer);
-            // cout<<(hashFile(buffer)).size() ;
-            // for (auto i = hash.begin(); i != hash.end(); ++i)
-            //     cout << *i << endl;
+            if (bufferSize > filesize)
+            {
+                printf("inside if\n");
+                bufferSize = filesize;
+                unsigned char *buffer = new unsigned char[bufferSize];
+                file.read((char *)(buffer), bufferSize);
+                // cout << buffer;
+                size_t count = file.gcount();
+                if (!count)
+                    break;
+                unsigned char temp[] = "this is it";
+                hashfile.push_back(hashFile(temp));
+                break;
+            }
+            else
+            {
+                printf("else ");
+                unsigned char *buffer = new unsigned char[bufferSize];
+                file.read((char *)(buffer), bufferSize);
+                size_t count = file.gcount();
+                if (!count)
+                    break;
+                hashfile.push_back(hashFile(buffer));
+            }
         }
+
         file.close();
-        // cout << buf;
+        cout << "hash string: ..";
+        for (auto i = hashfile.begin(); i != hashfile.end(); ++i)
+        {
+            cout << *i << endl
+                 << endl;
+        }
     }
+    else
+    {
+        printf("cannot open file");
+    }
+    // cout << buf;
 }

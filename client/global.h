@@ -14,7 +14,7 @@ struct metafile{
     char * hash ;
 } ;
 
-vector<string> hashFile(unsigned char *file);
+string hashFile(unsigned char *file);
 void createTorrentFile(char * filename);
 
 #endif

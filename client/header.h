@@ -1,7 +1,7 @@
 #ifndef Headers_H
 #define Headers_H
 
-#define CHUNK_SIZE 512 * 1024
+#define CHUNK_SIZE 512*1024 
 #define MAX 10000
 using namespace std;
 
@@ -9,5 +9,6 @@ using namespace std;
 #include <openssl/sha.h>
 #include <fstream>
 #include <iostream>
+#include <sys/stat.h>
 
 #endif

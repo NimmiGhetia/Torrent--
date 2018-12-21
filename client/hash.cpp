@@ -1,17 +1,34 @@
 #include "global.h"
 
-vector<string> hashFile(char *file)
+string toHash(unsigned char *hash)
 {
-    int pieces = ceil(strlen(file) / CHUNK_SIZE);
-    vector<string> buf;
-    for (int i = 0; i < pieces; i++)
+    if (hash == NULL)
     {
-        unsigned char ibuf[CHUNK_SIZE];
-        strncpy((char *)ibuf, file, 512);
-        file += 512 * sizeof(char);
-        unsigned char obuf[20];
-        SHA1(ibuf, strlen((char *)ibuf), obuf);
-        buf.push_back(string((char *)obuf));
+        printf("HASH NULL\n");
+        return "";
     }
+    unsigned char buf[40];
+    for (int i = 0; i < 20; i++)
+    {
+        sprintf((char *)&(buf[i * 2]), "%02x", hash[i]);
+    }
+    return string((char *)buf);
+}
+
+string hashFile(unsigned char *file)
+{
+    string buf="";
+    // printf("inside for");
+    unsigned char obuf[20];
+    cout << file;
+    unsigned char ibuf[]="A" ;
+    SHA1(ibuf, sizeof(file), obuf);
+    cout<<".......\n"<<ibuf;
+    for (int i = 0; i < 20; i++) {
+        printf("%02x ", obuf[i]);
+    }
+    cout<<".........\n";
+    // cout << toHash(obuf);
+    buf = toHash(obuf);
     return buf;
 }
