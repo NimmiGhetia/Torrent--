@@ -1,14 +1,15 @@
 CC = g++
 CFLAGS = -Wall -std=c++14 -g
 DEPS = header.h global.h
-OBJ = tracker.o main.o
+LIBS= -pthread
+OBJ = global.o share.o seederlist.o tracker.o main.o
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-term: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+tracker: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 	
 .PHONY: clean
 
 clean:
-	rm -rf *.o term
+	rm -rf *.o tracker

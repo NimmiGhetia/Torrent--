@@ -1,14 +1,17 @@
 #ifndef Headers_H
 #define Headers_H
 
-#define CHUNK_SIZE 512*1024 
-#define MAX 10000
-using namespace std;
-
 #include <bits/stdc++.h>
 #include <openssl/sha.h>
 #include <fstream>
 #include <iostream>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 
 #endif

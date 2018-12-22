@@ -35,13 +35,7 @@ vector<string> createHashString(char *filename)
                 hashfile.push_back(hashFile(buffer, bufferSize));
             }
         }
-
         file.close();
-        for (auto i = hashfile.begin(); i != hashfile.end(); ++i)
-        {
-            cout << *i << endl
-                 << endl;
-        }
     }
     else
     {
@@ -53,7 +47,7 @@ vector<string> createHashString(char *filename)
 
 void createFile(struct metafile details);
 
-void saveTorrentFile(char *filename, URL url1, URL url2)
+struct metafile saveTorrentFile(const char *filename, URL url1, URL url2)
 {
     struct metafile mtorrent;
     mtorrent.url1 = url1;
@@ -63,7 +57,7 @@ void saveTorrentFile(char *filename, URL url1, URL url2)
     stat(filename, &thestat);
     size_t filesize = thestat.st_size;
     mtorrent.filesize = filesize;
-    vector<string> chunkHash = createHashString(filename);
+    vector<string> chunkHash = createHashString((char *)filename);
     string hashString = "";
     for (auto i = chunkHash.begin(); i != chunkHash.end(); ++i)
     {
@@ -71,6 +65,10 @@ void saveTorrentFile(char *filename, URL url1, URL url2)
     }
     mtorrent.hash = hashString;
     createFile(mtorrent);
+    string msg=filename ;
+    msg+="created" ;
+    log(msg.c_str());
+    return mtorrent;
 }
 void replaceExt(string &s, const string &newExt)
 {
@@ -86,7 +84,8 @@ void replaceExt(string &s, const string &newExt)
 void createFile(struct metafile details)
 {
     fstream file;
-    replaceExt(details.filename,"mtorrent");
+    string filename=details.filename;
+    replaceExt(details.filename, "mtorrent");
     file.open(details.filename, ios::out);
     if (file.is_open())
     {
@@ -98,7 +97,7 @@ void createFile(struct metafile details)
         file << ":";
         file << details.url2.port;
         file << endl;
-        file << details.filename << endl;
+        file << filename << endl;
         file << details.filesize << endl;
         file << details.hash;
 
