@@ -27,12 +27,11 @@ int createSocket()
         exit(EXIT_FAILURE);
     }
     log("socket created");
+    int opt = 1;
     struct sockaddr_in localaddr;
     localaddr.sin_family = AF_INET;
     localaddr.sin_addr.s_addr = inet_addr(url.ip.c_str());
     localaddr.sin_port = url.port;
-    cout << url.ip << ":" << url.port;
-    cout << socketId;
     if (bind(socketId, (struct sockaddr *)&localaddr, sizeof(localaddr)) < 0)
     {
         string msg = "bind failed:" + errno;
@@ -41,6 +40,9 @@ int createSocket()
         log(msg.c_str());
         exit(EXIT_FAILURE);
     }
+    string msg = "binding to " + url.ip + ":";
+    msg += to_string(url.port);
+
     if (listen(socketId, CLIENT) == 0)
         log("listening..");
 
@@ -54,31 +56,29 @@ void connectClients(int socketId)
     addr_size = sizeof(struct sockaddr_in);
     printf("inside connectclient");
     int acc = accept(socketId, (struct sockaddr *)&clientaddr, &addr_size);
-    if (acc = 0)
+    if (acc == 0)
     {
-        cout << "no connection";
+        log("not connected");
     }
     else
     {
-        cout << "connected";
-        char ip[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(clientaddr.sin_addr), ip, INET_ADDRSTRLEN);
         URL client;
-        client.ip = ip;
         client.port = ntohs(clientaddr.sin_port);
         stringstream s;
-        // string port;
-        // s << client.port;
-        // s >> port;
-
-        string msg = "connection established to " + client.ip + ":" ;
-        msg+=to_string(client.port);
-        cout<<msg ;
+        char ip[INET_ADDRSTRLEN]; 
+        inet_ntop(AF_INET, &(clientaddr.sin_addr), ip, INET_ADDRSTRLEN); 
+        string msg = "connection established to " + string(ip) + ":";
+        msg += to_string(client.port);
         log(msg.c_str());
-        char buffer1[256], buffer2[256];
-        recv(acc, buffer2, 256, 0);
-        cout << buffer2;
+        char buffer1[256], buffer2[1024];
+        bzero(buffer2, 1024);
+        bzero(buffer1, 256);
+        int readval = recv(acc, buffer2, 14, 0);
+        msg="received: "+string(buffer2);
+        log(msg.c_str());
         strcpy(buffer1, "Hello");
-        send(acc, buffer1, 256, 0);
+        msg="sending: "+string(buffer1) ;
+        log(msg.c_str());
+        readval = send(acc, buffer1, strlen(buffer1), 0);
     }
 }

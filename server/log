@@ -1,3 +1,6 @@
 socket created
 listening..
-connection established to 192.168.43.4:49854
+connection established to 192.168.43.4:11043
+received: Hello, World!
+
+sending: Hello
