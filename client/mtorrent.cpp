@@ -71,6 +71,7 @@ void saveTorrentFile(char *filename, URL url1, URL url2)
     }
     mtorrent.hash = hashString;
     createFile(mtorrent);
+    shareFile(mtorrent);
 }
 void replaceExt(string &s, const string &newExt)
 {
