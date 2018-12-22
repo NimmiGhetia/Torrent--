@@ -21,15 +21,14 @@ void movecursor()
     clearscreen();
     while (flag)
     {
-        write(STDOUT_FILENO, "\x1b[2J", 4);
         char cmd[1024];
         cin >> cmd;
         if (strcmp(cmd, "share") == 0)
         {
             struct metafile mtorrent;
             shareFile(mtorrent);
+            cout<<"file shared successfully" ;
         }
-        break;
     }
 }
 

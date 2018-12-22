@@ -1,9 +1,5 @@
 #include "global.h"
 
-URL tracker1;
-URL tracker2;
-string log_filename ;
-
 URL processArgv(string source)
 {
     URL url;
@@ -30,7 +26,7 @@ int main(int argc, char *argv[])
 {
     string tracker1_str = argv[1];
     string tracker2_str = argv[2];
-    string seeder_file = argv[3];
+    seeder_file = argv[3];
     log_filename = argv[4];
 
     tracker1 = processArgv(tracker1_str);

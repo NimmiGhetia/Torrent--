@@ -43,7 +43,7 @@ int createSocket()
     return socketId;
 }
 
-void connectPeers(int socketId,struct metafile mtorrent)
+void connectPeers(int socketId, struct metafile mtorrent)
 {
     URL url = tracker1;
     struct sockaddr_in peeraddr;
@@ -58,12 +58,15 @@ void connectPeers(int socketId,struct metafile mtorrent)
         log(msg.c_str());
         exit(1);
     }
-    char buffer1[256];
-    strcpy(buffer1, "Hello, World!\n");
-    string msg = "received: " + string(buffer1);
+    stringstream ss;
+    ss << mtorrent.filename << endl;
+    ss << mtorrent.hash << endl;
+    ss << client.ip <<":"<<client.port ;
+    string buffer1=ss.str();
+    string msg = "sending: " + string(buffer1);
     log(msg.c_str());
 
-    int readval = send(socketId, buffer1, 256, 0);
+    int readval = send(socketId, buffer1.c_str(), 256, 0);
     if (readval < 0)
     {
         string msg = "error sending data";
@@ -73,6 +76,6 @@ void connectPeers(int socketId,struct metafile mtorrent)
     char buffer[1024] = {0};
     bzero(buffer, 1024);
     int valread = read(socketId, buffer, 1024);
-    msg = "sending: " + string(buffer);
+    msg = "received: " + string(buffer);
     log(msg.c_str());
 }

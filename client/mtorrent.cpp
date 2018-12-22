@@ -84,6 +84,7 @@ void replaceExt(string &s, const string &newExt)
 void createFile(struct metafile details)
 {
     fstream file;
+    string filename=details.filename;
     replaceExt(details.filename, "mtorrent");
     file.open(details.filename, ios::out);
     if (file.is_open())
@@ -96,7 +97,7 @@ void createFile(struct metafile details)
         file << ":";
         file << details.url2.port;
         file << endl;
-        file << details.filename << endl;
+        file << filename << endl;
         file << details.filesize << endl;
         file << details.hash;
 

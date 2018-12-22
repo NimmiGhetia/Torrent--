@@ -1,19 +1,65 @@
 #include "global.h"
 
-extern URL tracker1;
-extern URL tracker2;
-extern string log_filename;
+URL tracker1;
+URL tracker2;
+string log_filename;
+string seeder_file;
+map<string, vector<URL>> seederlist;
 
 fstream file;
+fstream seederfile;
+
+string getFilename(string s) ;
+
 void createLog()
 {
     file.open(log_filename, ios::out);
+    seederfile.open(seeder_file, ios::out);
 }
+
 void log(const char *msg)
 {
     if (file.is_open())
     {
         file << msg << endl;
+    }
+}
+
+void trackfile(string file)
+{
+    string delimeter = "\n";
+    string filename;
+    size_t pos = 0;
+    if ((pos = file.find(delimeter)) != string::npos)
+    {
+        filename = file.substr(0, pos);
+        file.erase(0, pos + delimeter.length());
+    }
+    string hashString;
+    if ((pos = file.find(delimeter)) != string::npos)
+    {
+        hashString = file.substr(0, pos);
+        file.erase(0, pos + delimeter.length());
+    }
+    string ip;
+    delimeter = ":";
+    if ((pos = file.find(delimeter)) != string::npos)
+    {
+        ip = file.substr(0, pos);
+        file.erase(0, pos + delimeter.length());
+    }
+    int port;
+    stringstream strValue;
+    strValue << file;
+    strValue >> port;
+    string key = getFilename(filename) + hashString;
+    URL url;
+    url.ip = ip;
+    url.port = port;
+    seederlist[key].push_back(url);
+    if (seederfile.is_open())
+    {
+        seederfile << key << "=" << url.ip << ":" << url.port << endl;
     }
 }
 
@@ -65,20 +111,30 @@ void connectClients(int socketId)
         URL client;
         client.port = ntohs(clientaddr.sin_port);
         stringstream s;
-        char ip[INET_ADDRSTRLEN]; 
-        inet_ntop(AF_INET, &(clientaddr.sin_addr), ip, INET_ADDRSTRLEN); 
+        char ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientaddr.sin_addr), ip, INET_ADDRSTRLEN);
         string msg = "connection established to " + string(ip) + ":";
         msg += to_string(client.port);
         log(msg.c_str());
         char buffer1[256], buffer2[1024];
         bzero(buffer2, 1024);
         bzero(buffer1, 256);
-        int readval = recv(acc, buffer2, 14, 0);
-        msg="received: "+string(buffer2);
+        int readval = recv(acc, buffer2, 1024, 0);
+        msg = "received: " + string(buffer2);
         log(msg.c_str());
-        strcpy(buffer1, "Hello");
-        msg="sending: "+string(buffer1) ;
+        trackfile(string(buffer2));
+        strcpy(buffer1, "share file tracked");
+        msg = "sending: " + string(buffer1);
         log(msg.c_str());
         readval = send(acc, buffer1, strlen(buffer1), 0);
     }
+}
+string getFilename(string s) {
+   char sep = '/';
+   size_t i = s.rfind(sep, s.length());
+   if (i != string::npos) {
+      return(s.substr(i+1, s.length() - i));
+   }
+
+   return("");
 }

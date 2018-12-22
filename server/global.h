@@ -14,5 +14,10 @@ struct metafile{
     char * hash ;
 } ;
 
+extern map<string,vector<URL>> seederlist;
+extern URL tracker1;
+extern URL tracker2;
+extern string log_filename;
+extern string seeder_file;
 
 #endif
