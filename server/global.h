@@ -20,4 +20,22 @@ extern URL tracker2;
 extern string log_filename;
 extern string seeder_file;
 
+void checkSharedFiles();
+void checkSharedFileRemoval();
+void checkSeeders();
+vector<string> getSeederlist();
+void createLog() ;
+void log(const char *msg) ;
+int createSocket() ;
+void addseed(const char *msg) ;
+void connectClients(int socketId);
+vector<URL> getInMemorySeederlist(string filename) ;
+vector<URL> getSeederlistFromStorage(string filename) ;
+void removeFromSeederlist(string content) ;
+string getToken(string &data,string delimeter) ;
+void trackfile(string file);
+void removefile(string file) ;
+string getFilename(string &file) ;
+
+
 #endif

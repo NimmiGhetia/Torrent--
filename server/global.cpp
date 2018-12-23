@@ -6,62 +6,7 @@ string log_filename;
 string seeder_file;
 map<string, vector<URL>> seederlist;
 
-fstream file;
-fstream seederfile;
-
-string getFilename(string s) ;
-
-void createLog()
-{
-    file.open(log_filename, ios::out);
-    seederfile.open(seeder_file, ios::out);
-}
-
-void log(const char *msg)
-{
-    if (file.is_open())
-    {
-        file << msg << endl;
-    }
-}
-
-void trackfile(string file)
-{
-    string delimeter = "\n";
-    string filename;
-    size_t pos = 0;
-    if ((pos = file.find(delimeter)) != string::npos)
-    {
-        filename = file.substr(0, pos);
-        file.erase(0, pos + delimeter.length());
-    }
-    string hashString;
-    if ((pos = file.find(delimeter)) != string::npos)
-    {
-        hashString = file.substr(0, pos);
-        file.erase(0, pos + delimeter.length());
-    }
-    string ip;
-    delimeter = ":";
-    if ((pos = file.find(delimeter)) != string::npos)
-    {
-        ip = file.substr(0, pos);
-        file.erase(0, pos + delimeter.length());
-    }
-    int port;
-    stringstream strValue;
-    strValue << file;
-    strValue >> port;
-    string key = getFilename(filename) + hashString;
-    URL url;
-    url.ip = ip;
-    url.port = port;
-    seederlist[key].push_back(url);
-    if (seederfile.is_open())
-    {
-        seederfile << key << "=" << url.ip << ":" << url.port << endl;
-    }
-}
+char *performAction(string msg, string buffer2);
 
 int createSocket()
 {
@@ -73,6 +18,9 @@ int createSocket()
         exit(EXIT_FAILURE);
     }
     log("socket created");
+    const int trueFlag = 1;
+    if (setsockopt(socketId, SOL_SOCKET, SO_REUSEADDR, &trueFlag, sizeof(int)) < 0)
+        log("Failure");
     int opt = 1;
     struct sockaddr_in localaddr;
     localaddr.sin_family = AF_INET;
@@ -122,19 +70,41 @@ void connectClients(int socketId)
         int readval = recv(acc, buffer2, 1024, 0);
         msg = "received: " + string(buffer2);
         log(msg.c_str());
-        trackfile(string(buffer2));
-        strcpy(buffer1, "share file tracked");
-        msg = "sending: " + string(buffer1);
-        log(msg.c_str());
-        readval = send(acc, buffer1, strlen(buffer1), 0);
+        char *buffer = performAction(msg, string(buffer2));
     }
 }
-string getFilename(string s) {
-   char sep = '/';
-   size_t i = s.rfind(sep, s.length());
-   if (i != string::npos) {
-      return(s.substr(i+1, s.length() - i));
-   }
 
-   return("");
+char *performAction(string msg, string buffer2)
+{
+    char buffer1[1024];
+    string doaction = getToken(buffer2, "\n");
+    cout << "action\n";
+    cout << doaction;
+    if (strcmp(doaction.c_str(), "share") == 0)
+    {
+        cout << "insiee share\n";
+        cout << buffer2;
+        trackfile(buffer2);
+        strcpy(buffer1, "file shared successfully");
+    }
+    else if (strcmp(doaction.c_str(), "remove") == 0)
+    {
+        removefile(buffer2);
+        strcpy(buffer1, "file removed successfully");
+    }
+    strcpy(buffer1, "ok");
+    return buffer1;
+}
+
+string getFilename(string &s)
+{
+    string temp = s;
+    char sep = '/';
+    size_t i = s.rfind(sep, s.length());
+    if (i != string::npos)
+    {
+        return (s.substr(i + 1, s.length() - i));
+    }
+    s = temp.substr(0, s.substr(i + 1, s.length() - i).length());
+    return ("");
 }

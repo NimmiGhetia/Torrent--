@@ -68,6 +68,7 @@ struct metafile saveTorrentFile(const char *filename, URL url1, URL url2)
     string msg=filename ;
     msg+="created" ;
     log(msg.c_str());
+    cout<<mtorrent.filename<<mtorrent.hash ;
     return mtorrent;
 }
 void replaceExt(string &s, const string &newExt)
@@ -103,4 +104,9 @@ void createFile(struct metafile details)
 
         file.close();
     }
+}
+
+void remove()
+{
+    
 }
