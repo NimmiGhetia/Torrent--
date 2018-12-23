@@ -5,6 +5,7 @@ void removeFile(string filename)
 
     stringstream ss;
     ss << "remove" << endl;
+    string fname = filename;
     replaceExt(filename, "mtorrent");
     fstream file;
     file.open(filename, ios::in);
@@ -18,12 +19,11 @@ void removeFile(string filename)
         int next = 40;
         string sub;
         int pos = 0;
-
         while (getline(file, line))
         {
-            ss << filename;
+            ss << fname;
             sub = line.substr(pos, next);
-            if (sub.length() < 40 &&sub.length()>0)
+            if (sub.length() < 40 && sub.length() > 0)
             {
                 next = next - sub.length();
                 continue;
@@ -35,8 +35,8 @@ void removeFile(string filename)
                 ss << client.ip << ":" << client.port;
                 ss << endl;
                 pos += next;
-                if(line.length()==pos)
-                break ;
+                if (line.length() == pos)
+                    break;
                 sub = line.substr(pos, next);
             }
             next = 20;
@@ -51,7 +51,12 @@ void removeFile(string filename)
         log("file removed successfully");
 
     int socketId = createSocket();
-    string buffer=ss.str().c_str() ;
-    cout<<buffer ;
-    connectPeers(socketId, buffer);
+    string buffer = ss.str().c_str();
+    cout << buffer;
+    connectPeers(socketId);
+    sendRemote(socketId,buffer) ;
+}
+
+vector<string> getHashStrings()
+{
 }

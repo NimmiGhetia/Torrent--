@@ -42,15 +42,25 @@ extern string log_filename;
 
 void createLog();
 void log(const char *msg);
+
 int createSocket();
-void connectPeers(int socketId, string data);
+void connectPeers(int socketId);
+void sendRemote(int sock,string data) ;
+string receiveRemote(int sock) ;
+int getSocketId() ;
+
 string hashFile(unsigned char *file, size_t size);
 vector<string> createHashString(char *filename);
 struct metafile saveTorrentFile(const char *filename, URL url1, URL url2);
-void shareFile(struct metafile mtorrent);
+struct metafile getTorrentFile(string filename) ;
+void getDetailsFromTorrentFile(string path) ;
+
 void enterCommand();
-string getToken(string str, string delimeter);
+string getToken(string &str, string delimeter);
 void replaceExt(string &a, const string &b);
+string getFilename(string &name);
+
+void shareFile(struct metafile mtorrent);
 void removeFile(string filename);
 
 #endif

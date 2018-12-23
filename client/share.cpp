@@ -16,5 +16,6 @@ void shareFile(struct metafile mtorrentfile)
     ss << client.ip << ":" << client.port;
     string buffer1 = ss.str();
     // cout<<"printinf details"<<mtorrent.filename<<" "<<mtorrent.hash<<""<<buffer1 ;
-    connectPeers(socketId, buffer1);
+    connectPeers(socketId);
+    sendRemote(socketId,buffer1);
 }

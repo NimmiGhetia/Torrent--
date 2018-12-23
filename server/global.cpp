@@ -48,7 +48,6 @@ void connectClients(int socketId)
     struct sockaddr_in clientaddr;
     socklen_t addr_size;
     addr_size = sizeof(struct sockaddr_in);
-    printf("inside connectclient");
     int acc = accept(socketId, (struct sockaddr *)&clientaddr, &addr_size);
     if (acc == 0)
     {
@@ -78,21 +77,19 @@ char *performAction(string msg, string buffer2)
 {
     char buffer1[1024];
     string doaction = getToken(buffer2, "\n");
-    cout << "action\n";
-    cout << doaction;
     if (strcmp(doaction.c_str(), "share") == 0)
     {
-        cout << "insiee share\n";
-        cout << buffer2;
         trackfile(buffer2);
+        printSeederlist() ;
         strcpy(buffer1, "file shared successfully");
     }
     else if (strcmp(doaction.c_str(), "remove") == 0)
     {
         removefile(buffer2);
+        printSeederlist();
         strcpy(buffer1, "file removed successfully");
     }
-    strcpy(buffer1, "ok");
+    strcpy(buffer1, "default");
     return buffer1;
 }
 

@@ -65,10 +65,10 @@ struct metafile saveTorrentFile(const char *filename, URL url1, URL url2)
     }
     mtorrent.hash = hashString;
     createFile(mtorrent);
-    string msg=filename ;
-    msg+="created" ;
+    string msg = filename;
+    msg += "created";
     log(msg.c_str());
-    cout<<mtorrent.filename<<mtorrent.hash ;
+    cout << mtorrent.filename << mtorrent.hash;
     return mtorrent;
 }
 void replaceExt(string &s, const string &newExt)
@@ -85,7 +85,7 @@ void replaceExt(string &s, const string &newExt)
 void createFile(struct metafile details)
 {
     fstream file;
-    string filename=details.filename;
+    string filename = details.filename;
     replaceExt(details.filename, "mtorrent");
     file.open(details.filename, ios::out);
     if (file.is_open())
@@ -105,8 +105,58 @@ void createFile(struct metafile details)
         file.close();
     }
 }
-
-void remove()
+void printMtorrentFile(struct metafile mtorrent);
+struct metafile getTorrentFile(string filename)
 {
-    
+    cout << "inside getTorrentFile" << endl;
+    fstream file;
+    struct metafile mtorrent;
+    file.open(filename, ios::in);
+    if (file.is_open())
+    {
+        string line;
+        int port;
+        URL url1, url2;
+        stringstream ss;
+        getline(file, line);
+        url1.ip = getToken(line, ":");
+        ss << line;
+        ss >> port;
+        url1.port = port;
+        getline(file, line);
+        url2.ip = getToken(line, ":");
+        int port2;
+        stringstream ss1;
+        ss1 << line;
+        ss1 >> port;
+        url2.port = port;
+        mtorrent.url1 = url1;
+        mtorrent.url2 = url2;
+        getline(file, line);
+        mtorrent.filename = line;
+        getline(file, line);
+        size_t sz;
+        stringstream ss2;
+        ss2 << line;
+        ss2 >> sz;
+        mtorrent.filesize = sz;
+        mtorrent.hash="" ;
+        while (getline(file, line))
+        {
+            mtorrent.hash += line;
+        }
+        file.close();
+    }
+    printMtorrentFile(mtorrent);
+    cout<<"file printed. returning..." ;
+    return mtorrent;
+}
+
+void printMtorrentFile(struct metafile mtorrent)
+{
+    cout << mtorrent.url1.ip << ":" << mtorrent.url1.port << endl;
+    cout << mtorrent.url2.ip << ":" << mtorrent.url2.port << endl;
+    cout << mtorrent.filename << endl;
+    cout << mtorrent.filesize << endl;
+    cout << mtorrent.hash << endl;
 }

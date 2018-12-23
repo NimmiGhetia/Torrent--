@@ -7,5 +7,6 @@ void checkSharedFiles()
     while(1)
     {
         connectClients(socketId);
+        printSeederlist() ;
     }
 }

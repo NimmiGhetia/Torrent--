@@ -7,7 +7,9 @@ string log_filename;
 
 fstream file;
 
-string getToken(string str, string delimeter)
+int socketId ;
+
+string getToken(string &str, string delimeter)
 {
     string token;
     size_t pos = 0;
@@ -34,7 +36,7 @@ void log(const char *msg)
 int createSocket()
 {
     URL url = client;
-    int socketId;
+    // int socketId;
     if ((socketId = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         log(string("socket failed:" + errno).c_str());
@@ -56,7 +58,7 @@ int createSocket()
     return socketId;
 }
 
-void connectPeers(int socketId, string data)
+void connectPeers(int socketId)
 {
     URL url = tracker1;
     struct sockaddr_in peeraddr;
@@ -71,9 +73,13 @@ void connectPeers(int socketId, string data)
         log(msg.c_str());
         exit(1);
     }
+
+}
+
+void sendRemote(int socketId,string data)
+{
     string msg = "sending: " + string(data);
     log(msg.c_str());
-
     int readval = send(socketId, data.c_str(), 256, 0);
     if (readval < 0)
     {
@@ -81,9 +87,32 @@ void connectPeers(int socketId, string data)
         log(msg.c_str());
         exit(1);
     }
+}
+
+int getSocketId()
+{
+    return socketId ;
+}
+
+string receiveRemote(int socketId)
+{
     char buffer[1024] = {0};
     bzero(buffer, 1024);
-    // int valread = read(socketId, buffer, 1024);
-    // msg = "received: " + string(buffer);
-    // log(msg.c_str());
+    int valread = read(socketId, buffer, 1024);
+    string msg = "received: " + string(buffer);
+    log(msg.c_str());
+    return string(buffer);
+}
+
+string getFilename(string &s)
+{
+    string temp = s;
+    char sep = '/';
+    size_t i = s.rfind(sep, s.length());
+    if (i != string::npos)
+    {
+        return (s.substr(i + 1, s.length() - i));
+    }
+    s = temp.substr(0, s.substr(i + 1, s.length() - i).length());
+    return ("");
 }

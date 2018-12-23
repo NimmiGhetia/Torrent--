@@ -1,7 +1,5 @@
 #include "global.h"
 
-void printSeederlist();
-
 string getToken(string &file, string delimeter)
 {
     string token;
@@ -10,7 +8,6 @@ string getToken(string &file, string delimeter)
     {
         token = file.substr(0, pos);
         file.erase(0, pos + delimeter.length());
-        cout << "\nafter changing" << file << "\n";
     }
     return token;
 }
@@ -57,7 +54,6 @@ void removeFromSeederlist(string filecontent)
     fstream file;
     file.open(seeder_file, ios::in);
     string input, changed_content;
-    // vector<URL> list;
     if (file.is_open())
     {
         while (!file.eof())

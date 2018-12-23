@@ -21,8 +21,8 @@ void movecursor()
     clearscreen();
     while (flag)
     {
-        cursordown(1) ;
-        cursorbackward(100) ;
+        cursordown(1);
+        cursorbackward(100);
         char cmd[1024];
         cin >> cmd;
         if (strcmp(cmd, "share") == 0)
@@ -35,8 +35,18 @@ void movecursor()
         {
             string filename;
             cin >> filename;
-            replaceExt(filename,"mtorrent") ;
-            removeFile(filename) ;
+            removeFile(filename);
+        }
+        else if (strcmp(cmd, "get") == 0)
+        {
+            cout << "inside get";
+            string filepath, destination;
+            cin >> filepath;
+            cout << filepath;
+            cin >> destination;
+            cout << destination;
+            cout << "here";
+            getDetailsFromTorrentFile(filepath);
         }
     }
 }
