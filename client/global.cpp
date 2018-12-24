@@ -23,7 +23,7 @@ string getToken(string &str, string delimeter)
 
 void createLog()
 {
-    file.open(log_filename, ios::out);
+    file.open(log_filename, ios::app);
 }
 void log(const char *msg)
 {

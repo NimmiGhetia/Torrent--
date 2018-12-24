@@ -63,4 +63,6 @@ string getFilename(string &name);
 void shareFile(struct metafile mtorrent);
 void removeFile(string filename);
 
+vector<URL> getPeersFromTracker(string key) ;
+void getDetailsFromTorrentFile(string path) ;
 #endif

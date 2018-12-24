@@ -5,13 +5,13 @@ URL tracker2;
 string log_filename;
 string seeder_file;
 map<string, vector<URL>> seederlist;
-
+int socketId;
 char *performAction(string msg, string buffer2);
 
 int createSocket()
 {
     URL url = tracker1;
-    int socketId;
+    // int socketId;
     if ((socketId = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         log(string("socket failed:" + errno).c_str());
@@ -43,7 +43,7 @@ int createSocket()
     return socketId;
 }
 
-void connectClients(int socketId)
+int acceptClients(int socketId)
 {
     struct sockaddr_in clientaddr;
     socklen_t addr_size;
@@ -63,24 +63,42 @@ void connectClients(int socketId)
         string msg = "connection established to " + string(ip) + ":";
         msg += to_string(client.port);
         log(msg.c_str());
-        char buffer1[256], buffer2[1024];
-        bzero(buffer2, 1024);
-        bzero(buffer1, 256);
-        int readval = recv(acc, buffer2, 1024, 0);
-        msg = "received: " + string(buffer2);
+    }
+    return acc;
+}
+
+string receiveRemote(int acc)
+{
+    char buffer2[1024];
+    bzero(buffer2, 1024);
+    int readval = recv(acc, buffer2, 1024, 0);
+    string msg = "received: " + string(buffer2);
+    log(msg.c_str());
+    return string(buffer2);
+}
+
+void sendRemote(int socketId, string data)
+{
+    int readVal = send(socketId, data.c_str(), data.length(), 0);
+    if (readVal < 0)
+    {
+        log("send failed");
+    }
+    else
+    {
+        string msg = "sending:\n" + data;
         log(msg.c_str());
-        char *buffer = performAction(msg, string(buffer2));
     }
 }
 
-char *performAction(string msg, string buffer2)
+string performAction(string buffer2)
 {
     char buffer1[1024];
     string doaction = getToken(buffer2, "\n");
     if (strcmp(doaction.c_str(), "share") == 0)
     {
         trackfile(buffer2);
-        printSeederlist() ;
+        printSeederlist();
         strcpy(buffer1, "file shared successfully");
     }
     else if (strcmp(doaction.c_str(), "remove") == 0)
@@ -89,8 +107,21 @@ char *performAction(string msg, string buffer2)
         printSeederlist();
         strcpy(buffer1, "file removed successfully");
     }
-    strcpy(buffer1, "default");
-    return buffer1;
+    else if (strcmp(doaction.c_str(), "get") == 0)
+    {
+        string buf=getPeers(buffer2);
+        strcpy(buffer1, buf.c_str());
+        cout<<"$$$$"<<buffer1<<endl<<endl ;
+        log(string(buffer1).c_str()) ;
+    }
+    else
+        strcpy(buffer1, "default");
+    return string(buffer1);
+}
+
+int getSocketId()
+{
+    return socketId;
 }
 
 string getFilename(string &s)

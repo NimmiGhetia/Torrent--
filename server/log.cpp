@@ -5,8 +5,8 @@ fstream seederfile;
 
 void createLog()
 {
-    file.open(log_filename, ios::out|ios::ate);
-    seederfile.open(seeder_file, ios::out);
+    file.open(log_filename, ios::app);
+    seederfile.open(seeder_file, ios::app);
 }
 
 void log(const char *msg)

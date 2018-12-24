@@ -9,14 +9,29 @@ void trackfile(string file)
     stringstream strValue;
     strValue << file;
     strValue >> port;
-    string key = getFilename(filename) + hashString;
+    string name = getFilename(filename);
+    // string key = getFilename(filename) + hashString;
     URL url;
     url.ip = ip;
     url.port = port;
-    seederlist[key].push_back(url);
-    stringstream ss;
-    ss << key << "=" << url.ip << ":" << url.port << " " << endl;
-    addseed(ss.str().c_str());
+    vector<string> hashstr;
+    int pos = 0;
+    int next = 40;
+    string sub = hashString.substr(pos, next);
+    pos += next;
+    while (pos <= hashString.length())
+    {
+        stringstream ss;
+        ss << name;
+        ss << sub;
+        hashstr.push_back(ss.str());
+        sub = hashString.substr(pos, next);
+        pos += next;
+        seederlist[ss.str()].push_back(url);
+        stringstream ss1;
+        ss1 << ss.str() << "=" << url.ip << ":" << url.port << " " << endl;
+        addseed(ss1.str().c_str());
+    }
 }
 
 void removefile(string file)
@@ -25,6 +40,20 @@ void removefile(string file)
     while (filecontent.length() > 0)
     {
         removeFromSeederlist(filecontent);
-        filecontent=getToken(file,"\n") ;
+        filecontent = getToken(file, "\n");
     }
+}
+
+string getPeers(string file)
+{
+    cout<<"inside get peers" ;
+        vector<URL> urls = getInMemorySeederlist(file);
+        string result = "";
+        for (int i = 0; i < urls.size(); i++)
+        {
+            stringstream ss;
+            ss << urls[i].ip << ":" << urls[i].port << endl;
+            result += ss.str();
+        }
+        return result ;
 }
