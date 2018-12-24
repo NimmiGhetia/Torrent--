@@ -21,13 +21,32 @@ void movecursor()
     clearscreen();
     while (flag)
     {
+        cursordown(1);
+        cursorbackward(100);
         char cmd[1024];
         cin >> cmd;
         if (strcmp(cmd, "share") == 0)
         {
             struct metafile mtorrent;
             shareFile(mtorrent);
-            cout<<"file shared successfully" ;
+            cout << "file shared successfully";
+        }
+        else if (strcmp(cmd, "remove") == 0)
+        {
+            string filename;
+            cin >> filename;
+            removeFile(filename);
+        }
+        else if (strcmp(cmd, "get") == 0)
+        {
+            cout << "inside get";
+            string filepath, destination;
+            cin >> filepath;
+            cout << filepath;
+            cin >> destination;
+            cout << destination;
+            cout << "here";
+            getDetailsFromTorrentFile(filepath);
         }
     }
 }

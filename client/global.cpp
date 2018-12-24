@@ -6,9 +6,24 @@ URL tracker2;
 string log_filename;
 
 fstream file;
+
+int socketId ;
+
+string getToken(string &str, string delimeter)
+{
+    string token;
+    size_t pos = 0;
+    if ((pos = str.find(delimeter)) != string::npos)
+    {
+        token = str.substr(0, pos);
+        str.erase(0, pos + delimeter.length());
+    }
+    return token;
+}
+
 void createLog()
 {
-    file.open(log_filename, ios::out);
+    file.open(log_filename, ios::app);
 }
 void log(const char *msg)
 {
@@ -21,7 +36,7 @@ void log(const char *msg)
 int createSocket()
 {
     URL url = client;
-    int socketId;
+    // int socketId;
     if ((socketId = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         log(string("socket failed:" + errno).c_str());
@@ -43,7 +58,7 @@ int createSocket()
     return socketId;
 }
 
-void connectPeers(int socketId, struct metafile mtorrent)
+void connectPeers(int socketId)
 {
     URL url = tracker1;
     struct sockaddr_in peeraddr;
@@ -58,24 +73,46 @@ void connectPeers(int socketId, struct metafile mtorrent)
         log(msg.c_str());
         exit(1);
     }
-    stringstream ss;
-    ss << mtorrent.filename << endl;
-    ss << mtorrent.hash << endl;
-    ss << client.ip <<":"<<client.port ;
-    string buffer1=ss.str();
-    string msg = "sending: " + string(buffer1);
-    log(msg.c_str());
 
-    int readval = send(socketId, buffer1.c_str(), 256, 0);
+}
+
+void sendRemote(int socketId,string data)
+{
+    string msg = "sending: " + string(data);
+    log(msg.c_str());
+    int readval = send(socketId, data.c_str(), 256, 0);
     if (readval < 0)
     {
         string msg = "error sending data";
         log(msg.c_str());
         exit(1);
     }
+}
+
+int getSocketId()
+{
+    return socketId ;
+}
+
+string receiveRemote(int socketId)
+{
     char buffer[1024] = {0};
     bzero(buffer, 1024);
     int valread = read(socketId, buffer, 1024);
-    msg = "received: " + string(buffer);
+    string msg = "received: " + string(buffer);
     log(msg.c_str());
+    return string(buffer);
+}
+
+string getFilename(string &s)
+{
+    string temp = s;
+    char sep = '/';
+    size_t i = s.rfind(sep, s.length());
+    if (i != string::npos)
+    {
+        return (s.substr(i + 1, s.length() - i));
+    }
+    s = temp.substr(0, s.substr(i + 1, s.length() - i).length());
+    return ("");
 }

@@ -15,14 +15,6 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-void checkSharedFiles();
-void checkSharedFileRemoval();
-void checkSeeders();
-vector<string> getSeederlist();
-void createLog() ;
-void log(char *msg) ;
-int createSocket() ;
-void connectClients(int socketId);
+#include <unistd.h>
 
 #endif

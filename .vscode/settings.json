@@ -5,6 +5,7 @@
         "*.tcc": "cpp",
         "fstream": "cpp",
         "ostream": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "list": "cpp"
     }
 }

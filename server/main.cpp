@@ -31,9 +31,11 @@ int main(int argc, char *argv[])
 
     tracker1 = processArgv(tracker1_str);
     tracker2 = processArgv(tracker2_str);
-    thread first(checkSharedFiles);
-    thread second(checkSeeders);
-    first.join();
-    second.join() ;
+    createLog() ;
+    checkRequests();
+    // thread second(getPeers);
+    
+    // first.join();
+    // second.join() ;
     return 0;
 }
