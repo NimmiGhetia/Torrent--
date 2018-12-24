@@ -27,15 +27,22 @@ void movecursor()
         cin >> cmd;
         if (strcmp(cmd, "share") == 0)
         {
-            struct metafile mtorrent;
-            shareFile(mtorrent);
-            cout << "file shared successfully";
+            string filepath;
+            cin >> filepath;
+            string filename;
+            cin >> filename;
+            thread t(&shareFile,filename,filepath) ;
+            // shareFile(filename, filepath);
+            t.detach() ;
+            
         }
         else if (strcmp(cmd, "remove") == 0)
         {
             string filename;
             cin >> filename;
-            removeFile(filename);
+            thread t(&removeFile,filename) ;
+            t.detach() ;
+            // removeFile(filename);
         }
         else if (strcmp(cmd, "get") == 0)
         {
@@ -46,7 +53,9 @@ void movecursor()
             cin >> destination;
             cout << destination;
             cout << "here";
-            getDetailsFromTorrentFile(filepath);
+            thread t(&getDetailsFromTorrentFile,filepath);
+            t.detach() ;
+            // getDetailsFromTorrentFile(filepath);
         }
     }
 }

@@ -1,5 +1,13 @@
 #include "global.h"
 
+void downloadFrom(URL peer,string hashkey)
+{
+    int socketId=createSocketForTracker();
+    connectPeers(socketId,peer) ;
+    string rcv=receiveRemote(socketId) ;
+    cout<<peer.ip<<":"<<peer.port ;
+}
+
 void getDetailsFromTorrentFile(string path)
 {
     struct metafile mtorrent;
@@ -26,13 +34,21 @@ void getDetailsFromTorrentFile(string path)
     {
         cout << hashstr[i] << endl;
         vector<URL> peers = getPeersFromTracker(hashstr[i].c_str());
+        int sz = peers.size();
+        int randomIndex = rand() % sz;
+        stringstream ss;
+        ss << peers[randomIndex].ip << ":" << peers[randomIndex].port << "\n"
+           << hashstr[i];
+            string str =ss.str() ;
+        thread t(&downloadFrom, peers[randomIndex], str);
+        t.join();
     }
 }
 
 vector<URL> getPeersFromTracker(string key)
 {
-    int socketId = createSocket();
-    connectPeers(socketId) ;
+    int socketId = createSocketForTracker();
+    connectPeers(socketId, tracker1);
     key = "get\n" + key;
     sendRemote(socketId, key);
     string buffer;
@@ -56,3 +72,4 @@ vector<URL> getPeersFromTracker(string key)
         cout << urls[i].ip << ":" << urls[i].port << endl;
     return urls;
 }
+

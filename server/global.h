@@ -33,7 +33,10 @@ void printSeederlist();
 
 void createLog() ;
 void log(const char *msg) ;
-int createSocket() ;
+
+int createSocketForClient() ;
+int createSocketForTracker(URL tracker) ;
+void connectPeers(int socketId,URL peer);
 int getSocketId() ;
 int acceptClients(int socketId);
 string receiveRemote(int socketId) ;

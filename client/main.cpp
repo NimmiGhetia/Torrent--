@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
     createLog();
 
     enterCommand() ;
-
+    // joinAllThreads() ;
     return 0;
 }

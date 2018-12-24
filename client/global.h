@@ -18,7 +18,7 @@
 #define KEY_DOWN 0x0106
 #define KEY_LEFT 0x0107
 #define KEY_RIGHT 0x0108
-
+#define CLIENT 5
 using namespace std;
 
 struct URL
@@ -39,30 +39,35 @@ extern URL client;
 extern URL tracker1;
 extern URL tracker2;
 extern string log_filename;
+// vector<thread::id> threads ;
 
 void createLog();
 void log(const char *msg);
 
-int createSocket();
-void connectPeers(int socketId);
-void sendRemote(int sock,string data) ;
-string receiveRemote(int sock) ;
-int getSocketId() ;
+int createSocketForClient();
+int createSocketForTracker();
+void connectPeers(int socketId, URL peer);
+int acceptClient(int socketId);
+void sendRemote(int sock, string data);
+string receiveRemote(int sock);
+int getSocketId();
+void joinAllThreads() ;
 
 string hashFile(unsigned char *file, size_t size);
 vector<string> createHashString(char *filename);
 struct metafile saveTorrentFile(const char *filename, URL url1, URL url2);
-struct metafile getTorrentFile(string filename) ;
-void getDetailsFromTorrentFile(string path) ;
+struct metafile getTorrentFile(string filename);
+void getDetailsFromTorrentFile(string path);
 
 void enterCommand();
 string getToken(string &str, string delimeter);
 void replaceExt(string &a, const string &b);
 string getFilename(string &name);
 
-void shareFile(struct metafile mtorrent);
+void shareFile(string filename, string filepath);
 void removeFile(string filename);
 
-vector<URL> getPeersFromTracker(string key) ;
-void getDetailsFromTorrentFile(string path) ;
+vector<URL> getPeersFromTracker(string key);
+void getDetailsFromTorrentFile(string path);
+void downloadFrom(URL peer,string hashkey);
 #endif
