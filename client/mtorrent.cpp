@@ -105,6 +105,7 @@ void createFile(struct metafile details)
         file.close();
     }
 }
+
 void printMtorrentFile(struct metafile mtorrent);
 struct metafile getTorrentFile(string filename)
 {

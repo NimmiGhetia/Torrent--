@@ -13,3 +13,8 @@ client: $(OBJ)
 
 clean:
 	rm -rf *.o clt 
+
+clear:
+	rm *.mtorrent
+	rm log9*
+		

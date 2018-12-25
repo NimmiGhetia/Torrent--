@@ -1,11 +1,17 @@
 #include "global.h"
 
-void downloadFrom(URL peer,string hashkey)
+void downloadFrom(URL peer, string hashkey)
 {
-    int socketId=createSocketForTracker();
-    connectPeers(socketId,peer) ;
-    string rcv=receiveRemote(socketId) ;
-    cout<<peer.ip<<":"<<peer.port ;
+    log("inside download from");
+    int socketId = createSocketForTracker();
+    stringstream ss;
+    ss << peer.ip << ":" << peer.port << endl;
+    log(ss.str().c_str());
+
+    connectPeers(socketId, peer);
+    sendRemote(socketId, hashkey);
+    string part = receiveRemote(socketId);
+    close(socketId) ;
 }
 
 void getDetailsFromTorrentFile(string path)
@@ -39,9 +45,10 @@ void getDetailsFromTorrentFile(string path)
         stringstream ss;
         ss << peers[randomIndex].ip << ":" << peers[randomIndex].port << "\n"
            << hashstr[i];
-            string str =ss.str() ;
-        thread t(&downloadFrom, peers[randomIndex], str);
-        t.join();
+        string str = ss.str();
+        log(str.c_str());
+        downloadFrom(peers[randomIndex], hashstr[i]);
+        // t.detach();
     }
 }
 
@@ -53,6 +60,7 @@ vector<URL> getPeersFromTracker(string key)
     sendRemote(socketId, key);
     string buffer;
     buffer = receiveRemote(socketId);
+    close(socketId) ;
     vector<URL> urls;
     string s;
     while ((s = getToken(buffer, "\n")).length() > 0)
@@ -72,4 +80,3 @@ vector<URL> getPeersFromTracker(string key)
         cout << urls[i].ip << ":" << urls[i].port << endl;
     return urls;
 }
-

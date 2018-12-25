@@ -55,6 +55,7 @@ void removeFile(string filename)
     cout << buffer;
     connectPeers(socketId,tracker1);
     sendRemote(socketId,buffer) ;
+    close(socketId) ;
 }
 
 vector<string> getHashStrings()

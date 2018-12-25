@@ -39,7 +39,8 @@ extern URL client;
 extern URL tracker1;
 extern URL tracker2;
 extern string log_filename;
-// vector<thread::id> threads ;
+extern map<string,string> fileAddress ;
+extern map<string,string> mtorrentAddress ;
 
 void createLog();
 void log(const char *msg);

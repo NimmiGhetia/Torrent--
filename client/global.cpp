@@ -5,6 +5,8 @@ URL tracker1;
 URL tracker2;
 
 int socketId ;
+map<string,string> fileAddress ;
+map<string,string> mtorrentAddress ;
 
 string getToken(string &str, string delimeter)
 {
@@ -116,7 +118,9 @@ void connectPeers(int socketId,URL peer)
     addr_size = sizeof(struct sockaddr_in);
     if (connect(socketId, (struct sockaddr *)&peeraddr, sizeof(peeraddr)) < 0)
     {
-        string msg = "could not connect";
+        stringstream ss ;
+        ss<<"could not connect to "<<peer.ip<<":"<<peer.port ;
+        string msg=ss.str() ;
         log(msg.c_str());
         exit(1);
     }
@@ -125,15 +129,17 @@ void connectPeers(int socketId,URL peer)
 
 void sendRemote(int socketId,string data)
 {
-    string msg = "sending: " + string(data);
+    stringstream ss ;
+    ss<<"sending "<<string(data).length() <<" bytes" ;
+    string msg = ss.str();
     log(msg.c_str());
     int readval = send(socketId, data.c_str(), 256, 0);
     if (readval < 0)
     {
         string msg = "error sending data";
         log(msg.c_str());
-        exit(1);
     }
+
 }
 
 int getSocketId()
@@ -146,9 +152,11 @@ string receiveRemote(int socketId)
     char buffer[1024] = {0};
     bzero(buffer, 1024);
     int valread = read(socketId, buffer, 1024);
-    string msg = "received: " + string(buffer);
+    stringstream ss ;
+    ss<<"received: " << string(buffer).length() << "bytes";
+    string msg = ss.str() ;
     log(msg.c_str());
-    close(socketId) ;
+    // close(socketId) ;
     return string(buffer);
 }
 
@@ -164,11 +172,3 @@ string getFilename(string &s)
     s = temp.substr(0, s.substr(i + 1, s.length() - i).length());
     return ("");
 }
-
-// void joinAllThreads()
-// {
-//     for(auto i=threads.begin() ; i!=threads.end() ; ++i)
-//     {
-//         // if((*i).
-//     }
-// }
