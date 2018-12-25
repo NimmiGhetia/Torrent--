@@ -8,7 +8,8 @@ map<string, vector<URL>> seederlist;
 int socketId;
 char *performAction(string msg, string buffer2);
 
-int createSocket()
+
+int createSocketForClient()
 {
     URL url = tracker1;
     // int socketId;
@@ -67,6 +68,52 @@ int acceptClients(int socketId)
     return acc;
 }
 
+int createSocketForTracker(URL url1)
+{
+    URL url = url1;
+    // int socketId;
+    if ((socketId = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        log(string("socket failed:" + errno).c_str());
+        exit(EXIT_FAILURE);
+    }
+    log("socket created");
+    const int trueFlag = 1;
+    if (setsockopt(socketId, SOL_SOCKET, SO_REUSEADDR, &trueFlag, sizeof(int)) < 0)
+        log("Failure");
+    struct sockaddr_in localaddr;
+    localaddr.sin_family = AF_INET;
+    localaddr.sin_addr.s_addr = inet_addr(url.ip.c_str());
+    localaddr.sin_port = url.port;
+    if (bind(socketId, (struct sockaddr *)&localaddr, sizeof(struct sockaddr_in)) == 0)
+    {
+        string msg = "binding to " + url.ip + ":";
+        msg += to_string(url.port);
+        log(msg.c_str());
+    }
+    else
+        log("Unable to bind");
+    return socketId;
+}
+
+void connectPeers(int socketId,URL peer)
+{
+    URL url = peer;
+    struct sockaddr_in peeraddr;
+    peeraddr.sin_family = AF_INET;
+    peeraddr.sin_addr.s_addr = inet_addr(url.ip.c_str());
+    peeraddr.sin_port = url.port;
+    socklen_t addr_size;
+    addr_size = sizeof(struct sockaddr_in);
+    if (connect(socketId, (struct sockaddr *)&peeraddr, sizeof(peeraddr)) < 0)
+    {
+        string msg = "could not connect";
+        log(msg.c_str());
+        exit(1);
+    }
+
+}
+
 string receiveRemote(int acc)
 {
     char buffer2[1024];
@@ -98,20 +145,20 @@ string performAction(string buffer2)
     if (strcmp(doaction.c_str(), "share") == 0)
     {
         trackfile(buffer2);
-        printSeederlist();
+        // printSeederlist();
         strcpy(buffer1, "file shared successfully");
     }
     else if (strcmp(doaction.c_str(), "remove") == 0)
     {
         removefile(buffer2);
-        printSeederlist();
+        // printSeederlist();
         strcpy(buffer1, "file removed successfully");
     }
     else if (strcmp(doaction.c_str(), "get") == 0)
     {
         string buf=getPeers(buffer2);
         strcpy(buffer1, buf.c_str());
-        cout<<"$$$$"<<buffer1<<endl<<endl ;
+        // cout<<"$$$$"<<buffer1<<endl<<endl ;
         log(string(buffer1).c_str()) ;
     }
     else

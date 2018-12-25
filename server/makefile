@@ -13,3 +13,7 @@ tracker: $(OBJ)
 
 clean:
 	rm -rf *.o tracker 
+
+clear:
+	rm seeder_list
+	rm log

@@ -50,11 +50,12 @@ void removeFile(string filename)
     else
         log("file removed successfully");
 
-    int socketId = createSocket();
+    int socketId = createSocketForTracker();
     string buffer = ss.str().c_str();
     cout << buffer;
-    connectPeers(socketId);
+    connectPeers(socketId,tracker1);
     sendRemote(socketId,buffer) ;
+    close(socketId) ;
 }
 
 vector<string> getHashStrings()

@@ -1,5 +1,19 @@
 #include "global.h"
 
+void downloadFrom(URL peer, string hashkey)
+{
+    log("inside download from");
+    int socketId = createSocketForTracker();
+    stringstream ss;
+    ss << peer.ip << ":" << peer.port << endl;
+    log(ss.str().c_str());
+
+    connectPeers(socketId, peer);
+    sendRemote(socketId, hashkey);
+    string part = receiveRemote(socketId);
+    close(socketId) ;
+}
+
 void getDetailsFromTorrentFile(string path)
 {
     struct metafile mtorrent;
@@ -26,17 +40,27 @@ void getDetailsFromTorrentFile(string path)
     {
         cout << hashstr[i] << endl;
         vector<URL> peers = getPeersFromTracker(hashstr[i].c_str());
+        int sz = peers.size();
+        int randomIndex = rand() % sz;
+        stringstream ss;
+        ss << peers[randomIndex].ip << ":" << peers[randomIndex].port << "\n"
+           << hashstr[i];
+        string str = ss.str();
+        log(str.c_str());
+        downloadFrom(peers[randomIndex], hashstr[i]);
+        // t.detach();
     }
 }
 
 vector<URL> getPeersFromTracker(string key)
 {
-    int socketId = createSocket();
-    connectPeers(socketId) ;
+    int socketId = createSocketForTracker();
+    connectPeers(socketId, tracker1);
     key = "get\n" + key;
     sendRemote(socketId, key);
     string buffer;
     buffer = receiveRemote(socketId);
+    close(socketId) ;
     vector<URL> urls;
     string s;
     while ((s = getToken(buffer, "\n")).length() > 0)

@@ -10,7 +10,6 @@ void trackfile(string file)
     strValue << file;
     strValue >> port;
     string name = getFilename(filename);
-    // string key = getFilename(filename) + hashString;
     URL url;
     url.ip = ip;
     url.port = port;
